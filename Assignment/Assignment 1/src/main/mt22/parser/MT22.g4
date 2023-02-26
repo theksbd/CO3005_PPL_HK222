@@ -1,178 +1,114 @@
-grammar MT22;
 // 1913418
+grammar MT22;
 
 @lexer::header {
 from lexererr import *
 }
 
-// @parser::header {
-// from antlr4.error.ErrorListener import ConsoleErrorListener, ErrorListener
-
-// class NewErrorListener(ConsoleErrorListener):
-//     INSTANCE = None
-
-//     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-// 	    return SyntaxException("Error on line " + str(line) +
-//                               " col " + str(column) + ": " + offendingSymbol.text)
-
-// NewErrorListener.INSTANCE = NewErrorListener()
-
-// class SyntaxException(Exception):
-//     def __init__(self, msg):
-//         self.message = msg
-// }
-
 options {
 	language = Python3;
 }
 /* -------------------------------------------------- PARSER -------------------------------------------------- */
-program: decls+ EOF;
+program: decls+ | array_type | expression | statement EOF;
 
-decls: var_decl | func_decl | array_type | statement | expression;
+decls: var_decl | func_decl;
 
-// Array type -------------------------------------------------------------
-array_type: ARRAY LSB dimesion RSB OF typ;
-dimesion: dimesion_type_int | dimesion_type_float;
-dimesion_type_int:
-	INTEGER_LIT COMMA dimesion_type_int
-	| INTEGER_LIT;
-dimesion_type_float:
-	FLOAT_LIT COMMA dimesion_type_float FLOAT_LIT;
-
-// Variable declaration
-var_decl: identifier_list COLON typ (equal_exp | equal_func_call);
+// Variable Declaration
+var_decl: identifier_list COLON (typ | array_type) (assign_value_list | assign_func_call | assign_array)? SEMI;
 identifier_list: IDENTIFIER COMMA identifier_list | IDENTIFIER;
-typ: BOOLEAN | INTEGER | FLOAT | STRING;
-equal_exp: (ASSIGN expression_list SEMI) | SEMI;
-equal_func_call: (ASSIGN function_call SEMI) | SEMI;
-expression_list: exp_list_type_int | exp_list_type_float;
-exp_list_type_int:
-	INTEGER_LIT COMMA exp_list_type_int
-	| INTEGER_LIT;
-exp_list_type_float:
-	FLOAT_LIT COMMA exp_list_type_float
-	| FLOAT_LIT;
-exp_list_type_string:
-	STRING_LIT COMMA exp_list_type_string
-	| STRING_LIT;
+typ: BOOLEAN | INTEGER | FLOAT | STRING | AUTO;
+assign_value_list: ASSIGN value_list;
+assign_func_call: ASSIGN function_call_list;
+value_list: value_list_type_int | value_list_type_float | value_list_type_string | value_list_type_boolean;
+value_list_type_int: INTEGER_LIT COMMA value_list_type_int | INTEGER_LIT;
+value_list_type_float: FLOAT_LIT COMMA value_list_type_float | FLOAT_LIT;
+value_list_type_string: STRING_LIT COMMA value_list_type_string | STRING_LIT;
+value_list_type_boolean: BOOLEAN_LIT COMMA value_list_type_boolean | BOOLEAN_LIT;
+assign_array: ASSIGN ARRAY_LIT;
 
 // Parameters
 parameter: INHERIT? OUT? IDENTIFIER COLON typ;
 
-// expression declarations --------------------------------------------------
-expression: expression_1 DOUBLE_COLON expression_1 | expression_1;
-
-expression_1:
-	expression_2 (
-		EQUAL
-		| NOT_EQUAL
-		| LESS_THAN
-		| GREATER_THAN
-		| LESS_EQUAL
-		| GREATER_EQUAL
-	) expression_2
-	| expression_2;
-
-expression_2:
-	expression_2 (AND | OR) expression_3
-	| expression_3;
-
-expression_3:
-	expression_3 (ADD | MINUS) expression_4
-	| expression_4;
-
-expression_4:
-	expression_4 (MUL | DIV | MODUL) expression_5
-	| expression_5;
-
-expression_5: NOT expression_5 | expression_6;
-
-expression_6: MINUS expression_6 | expression_7;
-
-expression_7: expression_7 factor | expression_8;
-
-expression_8: (LP expression RP) | factor;
-
-factor: (
-		INTEGER_LIT
-		| FLOAT_LIT
-		| STRING_LIT
-		| IDENTIFIER
-		| function_call
-	)
-	| IDENTIFIER LSB exp_list_type_int RSB;
-
-// function call ------------------------------------------------------------
-function_call: IDENTIFIER LP exp_list RP;
-exps_list: exp_list |;
-exp_list: expression COMMA exp_list | expression;
-
-// statement ----------------------------------------------------------------
-statement:
-	assign_stmt
-	| if_stmt
-	| for_stmt
-	| while_stmt
-	| do_while_stmt
-	| block_stmt
-	| return_stmt
-	| continue_stmt
-	| break_stmt
-	| call_stmt
-	| var_decl;
-
-// assignment statement ------------------------------------------------------
-assign_stmt: lhs ASSIGN expression SEMI;
-lhs: IDENTIFIER LSB exp_list_type_int RSB | IDENTIFIER;
-
-// if statement --------------------------------------------------------------
-if_stmt: (IF expression statement ELSE statement)
-	| IF expression statement;
-
-// for statement -------------------------------------------------------------
-for_stmt:
-	LP scala_val ASSIGN init_expr COMMA condition_expr COMMA update_expr RP statement;
-scala_val: IDENTIFIER;
-init_expr: INTEGER_LIT | IDENTIFIER;
-condition_expr:
-	IDENTIFIER (
-		LESS_THAN
-		| GREATER_THAN
-		| LESS_EQUAL
-		| GREATER_EQUAL
-		| NOT_EQUAL
-		| EQUAL
-	) (IDENTIFIER | expression);
-update_expr: IDENTIFIER (ADD | MINUS | MUL | MODUL) expression;
-
-// while statement ------------------------------------------------------------
-while_stmt: WHILE LP expression RP statement;
-
-// Do while statement ---------------------------------------------------------
-do_while_stmt: DO block_stmt WHILE expression;
-
-// call statement -------------------------------------------------------------
-call_stmt: function_call SEMI;
-
-// block statement ------------------------------------------------------------
-block_stmt: (LB statement* RB) | '{}';
-// statement_list: statement statement_list | statement;
-
-//break statement -------------------------------------------------------------
-break_stmt: BREAK SEMI;
-
-// continue statement ---------------------------------------------------------
-continue_stmt: CONTINUE SEMI;
-
-// return statement -----------------------------------------------------------
-return_stmt: RETURN expression SEMI;
-
-// Function declaration
+// Function Declaration
 func_decl: IDENTIFIER COLON FUNCTION return_type LP parameter_list RP inheritance_subpart? statement;
 return_type: BOOLEAN | INTEGER | FLOAT | STRING | VOID | AUTO;
 parameter_list: parameter_prime | ;
 parameter_prime: parameter COMMA parameter_prime | parameter;
 inheritance_subpart: INHERIT IDENTIFIER;
+
+// Array Type
+array_type: ARRAY LSB dimensions RSB OF typ;
+dimensions: INTEGER_LIT COMMA dimensions | INTEGER_LIT;
+
+// Expression
+expression: expr1 DOUBLE_COLON expr1 | expr1;
+expr1: expr2 (EQUAL | NOT_EQUAL | LESS_THAN | GREATER_THAN | LESS_EQUAL | GREATER_EQUAL) expr2 | expr2;
+expr2: expr2 (AND | OR) expr3 | expr3;
+expr3: expr3 (ADD | MINUS) expr4 | expr4;
+expr4: expr4 (MUL | DIV | MODUL) expr5 | expr5;
+expr5: NOT expr5 | expr6;
+expr6: MINUS expr6 | expr7;
+expr7: expr7 factor | expr8;
+expr8: LP expression RP | factor;
+factor: INTEGER_LIT | FLOAT_LIT | BOOLEAN_LIT | STRING_LIT | IDENTIFIER | function_call | IDENTIFIER LSB value_list_type_int RSB;
+
+// Expression List (nullable, comma-separated)
+expression_list: expression_prime | ;
+expression_prime: expression COMMA expression_prime | expression;
+
+// Statement
+statement: assign_stmt | if_stmt | for_stmt | while_stmt | do_while_stmt | break_stmt | continue_stmt | return_stmt | call_stmt | block_stmt;
+
+assign_stmt: lhs ASSIGN expression SEMI;
+lhs: IDENTIFIER | IDENTIFIER LSB value_list_type_int RSB;
+
+if_stmt: IF expression statement (ELSE statement)?;
+
+for_stmt: FOR LP scalar_variable ASSIGN init_expr COMMA condition_expr COMMA update_expr RP statement;
+scalar_variable: IDENTIFIER;
+init_expr: expression;
+condition_expr: IDENTIFIER (EQUAL | NOT_EQUAL | LESS_THAN | GREATER_THAN | LESS_EQUAL | GREATER_EQUAL) expression;
+update_expr: IDENTIFIER (ADD | MINUS | MUL | DIV | MODUL) expression;
+
+while_stmt: WHILE expression statement;
+
+do_while_stmt: DO block_stmt WHILE expression SEMI;
+
+break_stmt: BREAK SEMI;
+
+continue_stmt: CONTINUE SEMI;
+
+return_stmt: RETURN expression SEMI;
+
+call_stmt: (function_call | special_func) SEMI;
+
+block_stmt: LB stmts_or_var_decls RB | '{}';
+stmts_or_var_decls: stmt_or_var_decl stmts_or_var_decls | ;
+stmt_or_var_decl: statement_list | var_decl_list;
+statement_list: statement statement_list | statement;
+var_decl_list: var_decl var_decl_list | var_decl;
+
+// Function Call
+function_call: IDENTIFIER LP exp_list RP;
+exp_list: exp_prime | ;
+exp_prime: expression COMMA exp_prime | expression;
+
+// Function Call List
+function_call_list: function_call COMMA function_call_list | function_call;
+
+// Special Functions
+special_func: read_integer | print_integer | read_float | write_float | print_boolean | read_string | print_string | super_ | prevent_default;
+
+read_integer: READINTEGER LP RP;
+print_integer: PRINTINTEGER LP (INTEGER_LIT | IDENTIFIER) RP;
+read_float: READFLOAT LP RP;
+write_float: WRITEFLOAT LP (FLOAT_LIT | IDENTIFIER) RP;
+read_boolean: READBOOLEAN LP RP;
+print_boolean: PRINTBOOLEAN LP (BOOLEAN_LIT | IDENTIFIER) RP;
+read_string: READSTRING LP RP;
+print_string: PRINTSTRING LP (STRING_LIT | IDENTIFIER) RP;
+super_: SUPER LP expression_list RP;
+prevent_default: PREVENTDEFAULT LP RP;
 
 /* -------------------------------------------------- LEXER -------------------------------------------------- */
 
@@ -196,6 +132,16 @@ CONTINUE: 'continue';
 OF: 'of';
 INHERIT: 'inherit';
 ARRAY: 'array';
+READINTEGER: 'readInteger';
+PRINTINTEGER: 'printInteger';
+READFLOAT: 'readFloat';
+WRITEFLOAT: 'writeFloat';
+READBOOLEAN: 'readBoolean';
+PRINTBOOLEAN: 'printBoolean';
+READSTRING: 'readString';
+PRINTSTRING: 'printString';
+SUPER: 'super';
+PREVENTDEFAULT: 'preventDefault';
 
 // OPERATORS
 ADD: '+';
@@ -241,8 +187,9 @@ fragment SIGN: '+' | '-';
 fragment EXPPART: [eE] SIGN? DIGIT+;
 fragment TRUE: 'true';
 fragment FALSE: 'false';
-fragment ESC : '\\' ('b'|'f'|'r'|'n'|'t'|'\''|'\\') ;
-fragment CHAR: '\\"' .*? '\\"';
+fragment NOTESC: '\\' ~('b' | 'f' | 'n' | 'r' | 't' | '"' | '\'' | '\\');
+fragment ESC : '\\' ('b'|'f'|'r'|'n'|'t'|'\''|'\\'|'"');
+fragment CHAR: '\\"' (~[\n\\"] | CHAR | ESC)*? '\\"';
 fragment EXPS: INTS | FLOATS | STRINGS;
 fragment INTS: (INTEGER_LIT COMMA INTS) | INTEGER_LIT;
 fragment FLOATS: (FLOAT_LIT COMMA FLOATS) | FLOAT_LIT;
@@ -258,12 +205,11 @@ INTEGER_LIT: INTPART { self.text = self.text.replace("_","") };
 // Float
 FLOAT_LIT: (INTPART FRACPART EXPPART? | INTPART EXPPART | INTPART FRACPART | FRACPART EXPPART) { self.text = self.text.replace("_","") };
 
-
 // Boolean
 BOOLEAN_LIT: TRUE | FALSE;
 
 // String
-STRING_LIT: '"' (ESC | ~[\r\n\\"] | CHAR)* '"' { self.text = self.text[1:-1] };
+STRING_LIT: '"' (ESC | ~[\n\\"] | CHAR)* '"' { self.text = str(self.text[1:-1]) };
 
 // Array
 ARRAY_LIT: LB EXPS? RB;
@@ -273,8 +219,8 @@ IDENTIFIER: (LETTER | UNDERSCORE) (LETTER | UNDERSCORE | DIGIT)*;
 
 WS: [ \t\r\n]+ -> skip; // skip spaces, tabs, newlines
 
-UNCLOSE_STRING: '"' (~[\\"] | CHAR)*? {raise UncloseString(self.text)};
-ILLEGAL_ESCAPE: (~[\\"] | CHAR)*? '"' {raise IllegalEscape(self.text)};
+UNCLOSE_STRING: '"' (~[\\"] | CHAR | ESC)*? ([\r\n] | EOF) {
+		raise UncloseString(self.text[1:]) if self.text[len(self.text)-1] != '\n' and self.text[len(self.text)-1] != '\r' else UncloseString(self.text[1:-1])
+};
+ILLEGAL_ESCAPE: '"' (~[\\"] | CHAR | ESC)* NOTESC {raise IllegalEscape(self.text[1:])};
 ERROR_CHAR: .{raise ErrorToken(self.text)};
-// UNCLOSE_STRING: .;
-// ILLEGAL_ESCAPE: .;
