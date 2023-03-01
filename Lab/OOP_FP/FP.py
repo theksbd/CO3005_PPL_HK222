@@ -83,7 +83,6 @@
 # # Functional Programming
 # from functools import reduce
 
-
 # def flatten(lst):
 #     return list(reduce(lambda total, curr: total + curr, lst, []))
 
