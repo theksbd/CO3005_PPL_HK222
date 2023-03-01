@@ -172,6 +172,7 @@ COLON: ':';
 LB: '{';
 RB: '}';
 ASSIGN: '=';
+DOUBLE_QUOTE: '"';
 
 // FRAGMENTS
 fragment CPPCOMMENT: '//' ~[\r\n]*;
@@ -209,7 +210,7 @@ FLOAT_LIT: (INTPART FRACPART EXPPART? | INTPART EXPPART | INTPART FRACPART | FRA
 BOOLEAN_LIT: TRUE | FALSE;
 
 // String
-STRING_LIT: '"' (ESC | ~[\n\\"] | CHAR)* '"' { self.text = str(self.text[1:-1]) };
+STRING_LIT: DOUBLE_QUOTE (ESC | ~[\n\\"] | CHAR)* DOUBLE_QUOTE { self.text = str(self.text[1:-1]) };
 
 // Array
 ARRAY_LIT: LB EXPS? RB;
@@ -219,8 +220,8 @@ IDENTIFIER: (LETTER | UNDERSCORE) (LETTER | UNDERSCORE | DIGIT)*;
 
 WS: [ \t\r\n]+ -> skip; // skip spaces, tabs, newlines
 
-UNCLOSE_STRING: '"' (~[\\"] | CHAR | ESC)*? ([\r\n] | EOF) {
+UNCLOSE_STRING: DOUBLE_QUOTE (~[\\"] | CHAR | ESC)*? ([\r\n] | EOF) {
 		raise UncloseString(self.text[1:]) if self.text[len(self.text)-1] != '\n' and self.text[len(self.text)-1] != '\r' else UncloseString(self.text[1:-1])
 };
-ILLEGAL_ESCAPE: '"' (~[\\"] | CHAR | ESC)* NOTESC {raise IllegalEscape(self.text[1:])};
+ILLEGAL_ESCAPE: DOUBLE_QUOTE (~[\\"] | CHAR | ESC)* NOTESC {raise IllegalEscape(self.text[1:])};
 ERROR_CHAR: .{raise ErrorToken(self.text)};
