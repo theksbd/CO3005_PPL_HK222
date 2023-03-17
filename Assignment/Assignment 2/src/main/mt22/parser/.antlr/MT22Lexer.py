@@ -369,12 +369,12 @@ class MT22Lexer(Lexer):
     AND = 37
     OR = 38
     EQUAL = 39
-    NOT_EQUAL = 40
-    LESS_THAN = 41
-    LESS_EQUAL = 42
-    GREATER_THAN = 43
-    GREATER_EQUAL = 44
-    DOUBLE_COLON = 45
+    NOTEQUAL = 40
+    LESSTHAN = 41
+    LESSEQUAL = 42
+    GREATERTHAN = 43
+    GREATEREQUAL = 44
+    DOUBLECOLON = 45
     LP = 46
     RP = 47
     LSB = 48
@@ -386,13 +386,13 @@ class MT22Lexer(Lexer):
     LB = 54
     RB = 55
     ASSIGN = 56
-    DOUBLE_QUOTE = 57
+    DOUBLEQUOTE = 57
     COMMENT = 58
-    INTEGER_LIT = 59
-    FLOAT_LIT = 60
-    BOOLEAN_LIT = 61
-    STRING_LIT = 62
-    ARRAY_LIT = 63
+    INTEGERLIT = 59
+    FLOATLIT = 60
+    BOOLEANLIT = 61
+    STRINGLIT = 62
+    ARRAYLIT = 63
     IDENTIFIER = 64
     WS = 65
     UNCLOSE_STRING = 66
@@ -420,12 +420,12 @@ class MT22Lexer(Lexer):
             "CONTINUE", "OF", "INHERIT", "ARRAY", "READINTEGER", "PRINTINTEGER", 
             "READFLOAT", "WRITEFLOAT", "READBOOLEAN", "PRINTBOOLEAN", "READSTRING", 
             "PRINTSTRING", "SUPER", "PREVENTDEFAULT", "ADD", "MINUS", "MUL", 
-            "DIV", "MODUL", "NOT", "AND", "OR", "EQUAL", "NOT_EQUAL", "LESS_THAN", 
-            "LESS_EQUAL", "GREATER_THAN", "GREATER_EQUAL", "DOUBLE_COLON", 
-            "LP", "RP", "LSB", "RSB", "DOT", "COMMA", "SEMI", "COLON", "LB", 
-            "RB", "ASSIGN", "DOUBLE_QUOTE", "COMMENT", "INTEGER_LIT", "FLOAT_LIT", 
-            "BOOLEAN_LIT", "STRING_LIT", "ARRAY_LIT", "IDENTIFIER", "WS", 
-            "UNCLOSE_STRING", "ILLEGAL_ESCAPE", "ERROR_CHAR" ]
+            "DIV", "MODUL", "NOT", "AND", "OR", "EQUAL", "NOTEQUAL", "LESSTHAN", 
+            "LESSEQUAL", "GREATERTHAN", "GREATEREQUAL", "DOUBLECOLON", "LP", 
+            "RP", "LSB", "RSB", "DOT", "COMMA", "SEMI", "COLON", "LB", "RB", 
+            "ASSIGN", "DOUBLEQUOTE", "COMMENT", "INTEGERLIT", "FLOATLIT", 
+            "BOOLEANLIT", "STRINGLIT", "ARRAYLIT", "IDENTIFIER", "WS", "UNCLOSE_STRING", 
+            "ILLEGAL_ESCAPE", "ERROR_CHAR" ]
 
     ruleNames = [ "T__0", "AUTO", "BREAK", "BOOLEAN", "DO", "ELSE", "FLOAT", 
                   "FOR", "FUNCTION", "IF", "INTEGER", "RETURN", "STRING", 
@@ -433,16 +433,16 @@ class MT22Lexer(Lexer):
                   "READINTEGER", "PRINTINTEGER", "READFLOAT", "WRITEFLOAT", 
                   "READBOOLEAN", "PRINTBOOLEAN", "READSTRING", "PRINTSTRING", 
                   "SUPER", "PREVENTDEFAULT", "ADD", "MINUS", "MUL", "DIV", 
-                  "MODUL", "NOT", "AND", "OR", "EQUAL", "NOT_EQUAL", "LESS_THAN", 
-                  "LESS_EQUAL", "GREATER_THAN", "GREATER_EQUAL", "DOUBLE_COLON", 
+                  "MODUL", "NOT", "AND", "OR", "EQUAL", "NOTEQUAL", "LESSTHAN", 
+                  "LESSEQUAL", "GREATERTHAN", "GREATEREQUAL", "DOUBLECOLON", 
                   "LP", "RP", "LSB", "RSB", "DOT", "COMMA", "SEMI", "COLON", 
-                  "LB", "RB", "ASSIGN", "DOUBLE_QUOTE", "CPPCOMMENT", "CCOMMENT", 
+                  "LB", "RB", "ASSIGN", "DOUBLEQUOTE", "CPPCOMMENT", "CCOMMENT", 
                   "UPPERCASE", "LOWERCASE", "LETTER", "UNDERSCORE", "DIGIT", 
                   "INTPART", "FRACPART", "SIGN", "EXPPART", "TRUE", "FALSE", 
                   "NOTESC", "ESC", "CHAR", "EXPS", "INTS", "FLOATS", "STRINGS", 
-                  "COMMENT", "INTEGER_LIT", "FLOAT_LIT", "BOOLEAN_LIT", 
-                  "STRING_LIT", "ARRAY_LIT", "IDENTIFIER", "WS", "UNCLOSE_STRING", 
-                  "ILLEGAL_ESCAPE", "ERROR_CHAR" ]
+                  "COMMENT", "INTEGERLIT", "FLOATLIT", "BOOLEANLIT", "STRINGLIT", 
+                  "ARRAYLIT", "IDENTIFIER", "WS", "UNCLOSE_STRING", "ILLEGAL_ESCAPE", 
+                  "ERROR_CHAR" ]
 
     grammarFileName = "MT22.g4"
 
@@ -457,9 +457,9 @@ class MT22Lexer(Lexer):
     def action(self, localctx:RuleContext, ruleIndex:int, actionIndex:int):
         if self._actions is None:
             actions = dict()
-            actions[78] = self.INTEGER_LIT_action 
-            actions[79] = self.FLOAT_LIT_action 
-            actions[81] = self.STRING_LIT_action 
+            actions[78] = self.INTEGERLIT_action 
+            actions[79] = self.FLOATLIT_action 
+            actions[81] = self.STRINGLIT_action 
             actions[85] = self.UNCLOSE_STRING_action 
             actions[86] = self.ILLEGAL_ESCAPE_action 
             actions[87] = self.ERROR_CHAR_action 
@@ -471,17 +471,17 @@ class MT22Lexer(Lexer):
             raise Exception("No registered action for:" + str(ruleIndex))
 
 
-    def INTEGER_LIT_action(self, localctx:RuleContext , actionIndex:int):
+    def INTEGERLIT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 0:
              self.text = self.text.replace("_","") 
      
 
-    def FLOAT_LIT_action(self, localctx:RuleContext , actionIndex:int):
+    def FLOATLIT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 1:
              self.text = self.text.replace("_","") 
      
 
-    def STRING_LIT_action(self, localctx:RuleContext , actionIndex:int):
+    def STRINGLIT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 2:
              self.text = str(self.text[1:-1]) 
      
