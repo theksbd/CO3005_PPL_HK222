@@ -14,7 +14,7 @@ program: decls+ EOF;
 decls: vardecl | funcdecl;
 
 // Variable Declaration
-// vardecl: identifierList COLON (typ | arraytype) (assign_value_list | assign_func_call | assign_array)? SEMI;
+// vardecl: identifierList COLON (typ | arrayType) (assign_value_list | assign_func_call | assign_array)? SEMI;
 // assign_value_list: ASSIGN value_list;
 // assign_func_call: ASSIGN functionCallList;
 // value_list: value_list_type_int | value_list_type_float | value_list_type_string | value_list_type_boolean;
@@ -26,29 +26,31 @@ decls: vardecl | funcdecl;
 
 vardecl: vardeclAssign | vardeclNoAssign;
 
-vardeclAssign: IDENTIFIER COMMA vardeclAssignment COMMA expression SEMI | vardeclAssignBaseCase SEMI;
+vardeclAssign: vardeclAssignment SEMI;
 vardeclAssignment: IDENTIFIER COMMA vardeclAssignment COMMA expression | vardeclAssignBaseCase;
-vardeclAssignBaseCase: IDENTIFIER COLON (typ | arraytype) ASSIGN expression;
+vardeclAssignBaseCase: IDENTIFIER COLON (typ | arrayType) ASSIGN expression;
 
-vardeclNoAssign: identifierList COLON (typ | arraytype) SEMI;
+vardeclNoAssign: identifierList COLON (typ | arrayType) SEMI;
 
 // Parameters
-parameter: INHERIT? OUT? IDENTIFIER COLON (typ | arraytype);
+parameter: INHERIT? OUT? IDENTIFIER COLON (typ | arrayType);
 
 // Identifier List (nonnull, comma-separated)
 identifierList: IDENTIFIER COMMA identifierList | IDENTIFIER;
 typ: BOOLEAN | INTEGER | FLOAT | STRING | AUTO;
 
 // Function Declaration
-funcdecl: IDENTIFIER COLON FUNCTION returnType LP parameterList RP inheritanceSubpart? statement;
-returnType: BOOLEAN | INTEGER | FLOAT | STRING | VOID | AUTO | arraytype;
+funcdecl: IDENTIFIER COLON FUNCTION returnType LP parameterList RP inheritanceSubpart? blockStmt;
+returnType: BOOLEAN | INTEGER | FLOAT | STRING | VOID | AUTO | arrayType;
 parameterList: parameterPrime | ;
 parameterPrime: parameter COMMA parameterPrime | parameter;
 inheritanceSubpart: INHERIT IDENTIFIER;
 
 // Array Type
-arraytype: ARRAY LSB dimensions RSB OF typ;
+arrayType: ARRAY LSB dimensions RSB OF elementTyp;
 dimensions: INTEGERLIT COMMA dimensions | INTEGERLIT;
+elementTyp: BOOLEAN | INTEGER | FLOAT | STRING;
+
 arrayLit: LB expressionListNonnull RB;
 
 // Expression

@@ -1,0 +1,5 @@
+main: function void() {
+            x: array [5] of float = {1, 2, 3, 4, 5};
+            writeFloat(x[0]);
+            readFloat();
+            }

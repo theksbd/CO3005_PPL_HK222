@@ -1,0 +1,10 @@
+main: function void() {
+        x: integer = 65;
+        while (x > 0) {
+            x = x - 1;
+            y: integer = 65;
+            while (y > 0) {
+                y = y - 1;
+            }
+        }
+        }

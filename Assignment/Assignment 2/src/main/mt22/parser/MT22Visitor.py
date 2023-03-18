@@ -84,13 +84,18 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#arraytype.
-    def visitArraytype(self, ctx:MT22Parser.ArraytypeContext):
+    # Visit a parse tree produced by MT22Parser#arrayType.
+    def visitArrayType(self, ctx:MT22Parser.ArrayTypeContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by MT22Parser#dimensions.
     def visitDimensions(self, ctx:MT22Parser.DimensionsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MT22Parser#elementTyp.
+    def visitElementTyp(self, ctx:MT22Parser.ElementTypContext):
         return self.visitChildren(ctx)
 
 
