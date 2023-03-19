@@ -1,3 +1,0 @@
-main: function void() {
-            foo(2);
-            }

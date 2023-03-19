@@ -29,7 +29,7 @@ class ASTGeneration(MT22Visitor):
         #  Input: a, b, c, d: integer = 1, 2, 3, 4
         #  -> vardeclAssignment: [a, [b, [c, [d, integer, 1], 2], 3], 4]
 
-        #  flatten
+        #  Need to flatten vardeclAssignment list first
         def flatten(lst):
             result = []
             for element in lst:
@@ -152,10 +152,10 @@ class ASTGeneration(MT22Visitor):
     # dimensions: INTEGERLIT COMMA dimensions | INTEGERLIT;
     def visitDimensions(self, ctx: MT22Parser.DimensionsContext):
         if ctx.getChildCount() == 1:
-            return [self.visit(ctx.INTEGERLIT().getText())]
-        intLit = self.visit(ctx.INTEGERLIT().getText())
+            return [ctx.INTEGERLIT().getText()]
+        integerLit = ctx.INTEGERLIT().getText()
         dimensions = self.visit(ctx.dimensions())
-        return [intLit] + dimensions
+        return [integerLit] + dimensions
 
     # elementTyp: BOOLEAN | INTEGER | FLOAT | STRING;
     def visitElementTyp(self, ctx: MT22Parser.ElementTypContext):
@@ -185,8 +185,10 @@ class ASTGeneration(MT22Visitor):
     def visitExpr1(self, ctx: MT22Parser.Expr1Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.expr2(0))
-        op = ctx.EQUAL().getText()
-        if ctx.NOTEQUAL():
+        op = ''
+        if ctx.EQUAL():
+            op = ctx.EQUAL().getText()
+        elif ctx.NOTEQUAL():
             op = ctx.NOTEQUAL().getText()
         elif ctx.LESSTHAN():
             op = ctx.LESSTHAN().getText()
@@ -361,8 +363,10 @@ class ASTGeneration(MT22Visitor):
 
     # conditionExpr: expression (EQUAL | NOTEQUAL | LESSTHAN | GREATERTHAN | LESSEQUAL | GREATEREQUAL) expression;
     def visitConditionExpr(self, ctx: MT22Parser.ConditionExprContext):
-        operator = ctx.EQUAL().getText()
-        if ctx.NOTEQUAL():
+        operator = ''
+        if ctx.EQUAL():
+            operator = ctx.EQUAL().getText()
+        elif ctx.NOTEQUAL():
             operator = ctx.NOTEQUAL().getText()
         elif ctx.LESSTHAN():
             operator = ctx.LESSTHAN().getText()
@@ -401,32 +405,50 @@ class ASTGeneration(MT22Visitor):
     def visitReturnStmt(self, ctx: MT22Parser.ReturnStmtContext):
         return ReturnStmt(self.visit(ctx.expression()) if ctx.expression() else None)
     
-    # callStmt: (functionCall | specialFunc) SEMI;
+    # callStmt: (specialFunc SEMI) | (IDENTIFIER LP expressionListNullable RP SEMI);
     def visitCallStmt(self, ctx: MT22Parser.CallStmtContext):
-        if ctx.specialFunc():
+        if ctx.getChildCount() == 2:
             identifier, args = self.visit(ctx.specialFunc())
             if args is None:
                 return CallStmt(identifier, [])
             if isinstance(args, list):
                 return CallStmt(identifier, args)
             return CallStmt(identifier, [args])
-        functionCall = self.visit(ctx.functionCall())
-        return CallStmt(functionCall.name, functionCall.args)
-        
-    
-    # blockStmt: LB stmtsOrVardecls RB | '{}';
+        identifier = ctx.IDENTIFIER().getText()
+        expressionList = self.visit(ctx.expressionListNullable())
+        return CallStmt(identifier, expressionList)
+
+    # blockStmt: LB blockBody RB | EMPTYBLOCK;
     def visitBlockStmt(self, ctx: MT22Parser.BlockStmtContext):
         if ctx.getChildCount() == 1:
             return BlockStmt([])
-        return BlockStmt(self.visit(ctx.stmtsOrVardecls()))
+        # blockBody can be either a list of statements or a list of vardecls
+        #  but in case of vardecls, it is already a list of vardecls, so now it is a list of lists (nested list)
+
+        def flatten(lst):
+            result = []
+            for element in lst:
+                if isinstance(element, list):
+                    result.extend(flatten(element))
+                else:
+                    result.append(element)
+            return result
+        
+        return BlockStmt(flatten(self.visit(ctx.blockBody())))
     
-    # stmtsOrVardecls: stmtOrVardecl stmtsOrVardecls | ;
-    def visitStmtsOrVardecls(self, ctx: MT22Parser.StmtsOrVardeclsContext):
+    # blockBody: stmtsOrVardecls | ;
+    def visitBlockBody(self, ctx: MT22Parser.BlockBodyContext):
         if ctx.getChildCount() == 0:
             return []
+        return self.visit(ctx.stmtsOrVardecls())
+    
+    # stmtsOrVardecls: stmtOrVardecl stmtsOrVardecls | stmtOrVardecl;
+    def visitStmtsOrVardecls(self, ctx: MT22Parser.StmtsOrVardeclsContext):
+        if ctx.getChildCount() == 1:
+            return [self.visit(ctx.stmtOrVardecl())]
         return [self.visit(ctx.stmtOrVardecl())] + self.visit(ctx.stmtsOrVardecls())
     
-    # stmtOrVardecl: statementList | vardeclList;
+    # stmtOrVardecl: statement | vardecl;
     def visitStmtOrVardecl(self, ctx: MT22Parser.StmtOrVardeclContext):
         return self.visitChildren(ctx)
     
@@ -442,7 +464,7 @@ class ASTGeneration(MT22Visitor):
             return [self.visit(ctx.vardecl())]
         return [self.visit(ctx.vardecl())] + self.visit(ctx.vardeclList())
     
-    # functionCall: IDENTIFIER LP expressionListNullable RP | specialFunc;
+    # functionCall: specialFunc | IDENTIFIER LP expressionListNullable RP;
     def visitFunctionCall(self, ctx: MT22Parser.FunctionCallContext):
         if ctx.getChildCount() == 1:
             identifier, args = self.visit(ctx.specialFunc())
@@ -499,7 +521,7 @@ class ASTGeneration(MT22Visitor):
 
     # superFunction: SUPER LP expressionListNonnull RP;
     def visitSuperFunction(self, ctx: MT22Parser.SuperFunctionContext):
-        return ctx.SUPERFUNCTION().getText(), self.visit(ctx.expressionListNonnull())
+        return ctx.SUPER().getText(), self.visit(ctx.expressionListNonnull())
     
     # preventDefault: PREVENTDEFAULT LP RP;
     def visitPreventDefault(self,ctx:MT22Parser.PreventDefaultContext):

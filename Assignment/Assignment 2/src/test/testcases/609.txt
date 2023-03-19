@@ -1,3 +1,0 @@
-main: function void() {
-            if (n == 0) return 1;
-            }

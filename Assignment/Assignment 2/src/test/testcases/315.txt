@@ -1,0 +1,17 @@
+main: function void () {
+            a: boolean = true;
+            do {
+                i: integer;
+                var: array[10] of integer;
+                for(i = 0, i < 10, i + 1) {
+                    var[i] = i * i;
+                }
+                while(i > 0) {
+                    printInteger(var[i]);
+                    i = i - 1;
+                }
+                if (i == 0) {
+                    a = false;
+                }
+            } while (a == true);
+        }

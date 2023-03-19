@@ -1,3 +1,0 @@
-main: function void() {
-            printInteger(foo(5));
-            }

@@ -1,0 +1,5 @@
+main: function void () {
+            printInteger(4);
+            a, b: integer = 1, 2;
+            foo(a, b);
+        }

@@ -1,3 +1,0 @@
-main: function void() {
-            x: integer = fact(3);
-            }

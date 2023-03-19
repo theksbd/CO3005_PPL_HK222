@@ -1,5 +1,0 @@
-main: function void() {
-            while (i < 10) {
-                writeInt(i);
-            }
-            }

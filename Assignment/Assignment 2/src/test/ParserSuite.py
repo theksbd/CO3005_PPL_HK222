@@ -89,7 +89,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 602))
 
     def test_3(self):
-        input = """main: function void () {}"""
+        input = """main: function void () { }"""
         expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 603))
 

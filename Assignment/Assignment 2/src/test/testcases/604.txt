@@ -1,3 +1,0 @@
-main: function void() {
-            a, b, c: integer = 3, 4, 6;
-            }

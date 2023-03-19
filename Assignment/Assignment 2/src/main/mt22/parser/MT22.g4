@@ -95,16 +95,21 @@ continueStmt: CONTINUE SEMI;
 
 returnStmt: RETURN (expression | ) SEMI;
 
-callStmt: (functionCall | specialFunc) SEMI;
+callStmt: (specialFunc SEMI) | (IDENTIFIER LP expressionListNullable RP SEMI);
 
-blockStmt: LB stmtsOrVardecls RB | '{}';
-stmtsOrVardecls: stmtOrVardecl stmtsOrVardecls | ;
-stmtOrVardecl: statementList | vardeclList;
+blockStmt: LB blockBody RB | EMPTYBLOCK;
+blockBody: stmtsOrVardecls | ;
+stmtsOrVardecls: stmtOrVardecl stmtsOrVardecls | stmtOrVardecl;
+stmtOrVardecl: statement | vardecl;
+
+// Statement List (nonnull, comma-separated)
 statementList: statement statementList | statement;
+
+// Variable Declaration List (nonnull, comma-separated)
 vardeclList: vardecl vardeclList | vardecl;
 
 // Function Call
-functionCall: IDENTIFIER LP expressionListNullable RP | specialFunc;
+functionCall: specialFunc | IDENTIFIER LP expressionListNullable RP;
 
 // Function Call List (nonnull, comma-separated)
 functionCallList: functionCall COMMA functionCallList | functionCall;
@@ -186,6 +191,7 @@ LB: '{';
 RB: '}';
 ASSIGN: '=';
 DOUBLEQUOTE: '"';
+EMPTYBLOCK: '{}';
 
 // FRAGMENTS
 fragment CPPCOMMENT: '//' ~[\r\n]*;
