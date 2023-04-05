@@ -1,0 +1,141 @@
+def foo(x,y,z) = if y(x) then z(x) else x + 1
+
+1. x + 1, x: integer, trả về integer
+2. z là hàm
+2.1 Đầu vào của z là x, x: integer
+2.2 Đầu ra của z là 1 nhánh của if, cùng kiểu x + 1: integer
+=> z: integer -> integer
+3. y là hàm
+3.1 Đầu vào của y là x, x: integer
+3.2 Đầu ra của y là biểu thức điều kiện của if, boolean
+=> y: integer -> boolean
+4. Đầu ra của foo là z(x) hoặc x + 1, có kiểu integer
+foo: integer*(integer->bool)*(integer->integer)->integer
+
+/* -------------------------------------*/
+
+def foo(x,y,z) = if x(y) then 1 else z(y)
+
+1. z là hàm
+1.1 Đầu ra của z là 1 nhánh của if, cùng kiểu với 1: integer, suy ra đầu ra của z là integer
+2. x là hàm
+2.1 x là biểu thức điều kiện của if nên đầu ra của x là boolean
+3. Đầu ra của foo là 1 hoặc z(y)
+foo: (T1->boolean)*T1*(T1->integer)->integer
+
+
+/* -------------------------------------*/
+
+def foo(x,y,z) = y(z(x))
+
+1. z là hàm
+2. y là hàm
+3. z(x) truyền cho y, đầu ra của z cũng chính là (có cùng kiểu với) đầu vào của y
+4. Đầu ra của foo cũng chính là (có cùng kiểu với) đầu ra của y
+foo: T1*(T2->T3)*(T1->T2)->T3
+
+/* -------------------------------------*/
+
+Viết biểu thức kiểu c C/C++:
+struct X {int x; char y[20]; X* n;}
+
+record((x*integer)*(y*array(0..19,char))*(n*pointer(X)))
+
+/* -------------------------------------*/
+
+def foo(x,y,z,t) = if t(x) then y(y(x)) else z - 2
+
+1. z - 2 là 1 nhánh của if, 2 là integer nên z - 2 là integer => z: integer
+2. y là hàm
+3. Đầu ra của y cùng kiểu với z - 2 => y: ___ -> integer
+4. Mà đầu vào của y nhận y(x), mà y(x) cũng có đầu ra là integer (mục 3) => y: integer -> integer
+5. x là đầu vào của y => x: integer
+6. t là hàm
+7. t nhận x là đầu vào, đầu ra của t là biểu thức của if => t: integer -> boolean
+foo: integer*(integer->integer)*integer*(integer*boolean)->integer
+
+/* -------------------------------------*/
+
+def foo(x,y,z): return filter(x(z), y)
+def bar(x):
+    def zar(t): return t == float(x)
+    return zar
+print(foo(bar,x,y))
+
+Biết rằng filter: (T1->boolean)*List[T1]->List[T1]
+	  float: integer->real
+	  phép so sánh == áp dụng cho 2 expression cùng kiểu và trả về boolean
+
+1. x là đầu vào của float => x: integer
+2. t cùng kiểu với hàm float => t: real
+zar: real->boolean
+bar: integer->(real->boolean)
+
+1. y là List các biến có kiểu T1
+2. x là hàm
+3. Đầu ra của x là (T1->boolean)
+4. bar === x => T1 là real, z: integer
+foo: (integer->(real->boolean))*List[real]*integer->List[real]
+
+/* -------------------------------------*/
+
+def F(t,x,y) = if E(x) then 0 else t(x, y)
+def G(m,n) = n(m)
+F(G,z,U)
+
+Biết rằng các hàm ko thể quá tải hàm (overload) hay danh sách tham số đầu vào và kiểu trả về là duy nhất. Giả sử kiểu của z và U là
+T1 và T2.
+
+1. E là hàm
+2. x cùng kiểu với z => x: T1
+3. E: T1->boolean
+4. t là hàm
+5. Đầu ra của t cùng kiểu với 0 => Đầu ra của G cùng kiểu với 0 => Đầu ra của n cùng kiểu với 0 => integer
+6. y cùng kiểu với U => y: T2
+7. n cùng kiểu với y => n: T2
+8. m cùng kiểu với x => m: T1
+
+G: T1*T2->integer
+F: (T1*T2->(T1->integer))*T1*T2->integer
+
+Trong G:
+m: T3
+n: T3->T4
+G: T3*(T3->T4)->T4
+
+Trong F:
+E(x): ? -> boolean
+t(x,y): ? -> integer
+
+Đầu ra của t cùng kiểu với 0 => Đầu ra của G cùng kiểu với 0 => Đầu ra của n cùng kiểu với 0 => T4 là integer
+x cùng kiểu với z => x: T1 và T1 cũng là T3
+y cùng kiểu với U => y: T2 và T2 cùng kiểu với n => T2 là T1->integer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
