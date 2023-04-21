@@ -1,7 +1,6 @@
 from MT22Visitor import MT22Visitor
 from MT22Parser import MT22Parser
 from AST import *
-from functools import reduce
 
 class ASTGeneration(MT22Visitor):
     # program: decls+ EOF;
