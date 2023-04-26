@@ -1,0 +1,8 @@
+
+        x: float = 3.0;
+        fact : function integer (n : integer) {
+            x: integer = 3;
+            x: boolean = false;
+        }
+        main: function void(){}
+    

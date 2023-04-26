@@ -1,0 +1,17 @@
+
+        // foo: function auto(){}
+        // foo1: function auto(y: boolean){}
+        foo2: function boolean(i: integer){}
+        /*fact : function integer () {
+            // a : array [2] of integer;
+            // i: float = 3;
+        }*/
+        main: function void(){
+
+            // i: integer = 3;
+            // for (i = 123, i > 8, i + 1){}
+
+            for (i = 123, i > 8, foo2(1)){}
+            // for (i = 123, i > 8, i + 1.4){}
+        }
+    

@@ -1,0 +1,1 @@
+Type mismatch in Variable Declaration: VarDecl(a2, ArrayType([2, 2], IntegerType), ArrayLit([ArrayLit([FloatLit(3.3), FloatLit(3.5)]), ArrayLit([FloatLit(123.1), FloatLit(199.1)])]))

@@ -1,0 +1,15 @@
+
+        findMax: function integer(n: integer, arr: array[100] of integer) {
+            max: integer = arr[0];
+            for (i = 1, i < n, i+1) {
+                if (arr[i] > max) {
+                    max = arr[i];
+                }
+            }
+            return max;
+        }
+        main: function void() {
+            arr: array [5] of integer = {1, 100, 1000, 0, -1000};
+            printInteger(findMax(5, arr));
+        }
+    

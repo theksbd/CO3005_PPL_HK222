@@ -1,0 +1,4 @@
+
+        a3 : array [2, 2] of boolean = {{3.3, 3.5}, {123.1, 199.10}};
+        main: function void(){}
+    

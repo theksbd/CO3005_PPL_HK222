@@ -1,0 +1,22 @@
+
+        main: function void() {
+            x: array[4, 10, 10] of integer = {1, 2, 3, 4};
+            for (i = 1, i < 100, i+1) {
+                if (i % 2 == 0) {
+                    while(true){
+                        x[i, 0, 1] = i;
+                        break;
+                    }
+                    do{
+                        continue;
+                    }while(true);
+                    continue;
+                    break;
+                } else {
+                    x[0, i] = i + 1;
+                }
+                break;
+            }
+            break;
+        }
+    

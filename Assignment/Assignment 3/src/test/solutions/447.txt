@@ -1,0 +1,1 @@
+Type mismatch in statement: CallStmt(super, IntegerLit(10))

@@ -1,0 +1,6 @@
+
+        x: integer = 3;
+        y: float = 3.100;
+        z: auto = y + x;
+        main: function void(){}
+    

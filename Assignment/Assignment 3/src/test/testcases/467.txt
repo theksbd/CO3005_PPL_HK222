@@ -1,0 +1,17 @@
+
+        binarySearch: function integer(arr: array[100] of integer, left: integer, right: integer, x: integer) {
+          if (right >= left) {
+            mid:integer = left + (right - left) / 2;
+            if (arr[mid] == x)
+              return mid;
+            if (arr[mid] > x)
+              return binarySearch(arr, left, mid - 1, x);
+            return binarySearch(arr, mid + 1, right, x);
+          }
+          return -1;
+        }
+        main: function void() {
+            arr   : array [5] of integer = {1, 91, 0, -100, 100};
+            binarySearch(arr, 0, 4, 0);
+        }
+    

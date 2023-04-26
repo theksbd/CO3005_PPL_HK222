@@ -1,0 +1,6 @@
+
+        x: boolean;
+        y: auto = 3.100;
+        z: auto = y + x;
+        main: function void(){}
+    

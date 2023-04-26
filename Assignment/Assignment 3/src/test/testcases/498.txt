@@ -1,0 +1,6 @@
+
+            x: integer;
+            inherit out  y: integer
+            main: function void() {
+            }
+            

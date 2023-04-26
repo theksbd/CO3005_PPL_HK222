@@ -1,0 +1,9 @@
+
+            foo3: function auto(inherit i: integer, a: float) {}
+            foo2: function auto(inherit b: float, a: float) inherit foo3 {
+                super(true, 1.0);
+            }
+            main: function void(){
+                foo2(foo1(1.0), 1);
+            }
+            

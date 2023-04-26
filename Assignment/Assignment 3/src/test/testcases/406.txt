@@ -1,0 +1,8 @@
+
+        isTrue: function boolean(x: boolean) {
+            return x;
+        }
+        x: boolean = false;
+        y: auto = isTrue(x);
+        main: function void(){}
+    

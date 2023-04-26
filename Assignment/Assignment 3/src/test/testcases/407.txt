@@ -1,0 +1,8 @@
+
+            main: function void() {
+                do {
+                    x: integer = "hoang";
+                }
+                while(x > 1);
+            }
+        

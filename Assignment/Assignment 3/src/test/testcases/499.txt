@@ -1,0 +1,7 @@
+
+            main: function void(){
+                x, y: auto = x, y;
+                z: integer = (x + 1)+y;
+                y = 100.0;
+            }
+        

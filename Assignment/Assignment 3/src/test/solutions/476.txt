@@ -1,0 +1,1 @@
+Type mismatch in Variable Declaration: VarDecl(d, FloatType, BinExpr(+, Id(c), IntegerLit(1)))

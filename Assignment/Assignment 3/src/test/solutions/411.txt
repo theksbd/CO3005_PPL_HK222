@@ -1,0 +1,1 @@
+Type mismatch in Variable Declaration: VarDecl(y, IntegerType, BinExpr(||, BooleanLit(True), BinExpr(&&, BooleanLit(True), BooleanLit(False))))

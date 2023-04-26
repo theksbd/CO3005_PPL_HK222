@@ -1,0 +1,1 @@
+Type mismatch in expression: BinExpr(+, FuncCall(foo1, [FuncCall(foo, [IntegerLit(1900)])]), IntegerLit(1))
