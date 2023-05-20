@@ -10,7 +10,7 @@ def foo(x,y,z) = if y(x) then z(x) else x + 1
 3.2 Đầu ra của y là biểu thức điều kiện của if, boolean
 => y: integer -> boolean
 4. Đầu ra của foo là z(x) hoặc x + 1, có kiểu integer
-foo: integer*(integer->bool)*(integer->integer)->integer
+foo: integer*(integer->boolean)*(integer->integer)->integer
 
 /* -------------------------------------*/
 
@@ -36,7 +36,7 @@ foo: T1*(T2->T3)*(T1->T2)->T3
 
 /* -------------------------------------*/
 
-Viết biểu thức kiểu c C/C++:
+Viết biểu thức kiểu của C/C++:
 struct X {int x; char y[20]; X* n;}
 
 record((x*integer)*(y*array(0..19,char))*(n*pointer(X)))
