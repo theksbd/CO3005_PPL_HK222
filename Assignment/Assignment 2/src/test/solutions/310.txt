@@ -1,3 +1,0 @@
-Program([
-	FuncDecl(main, VoidType, [], None, BlockStmt([CallStmt(super, FuncCall(foo, [Id(a), Id(b)]))]))
-])

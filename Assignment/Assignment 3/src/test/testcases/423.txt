@@ -1,5 +1,0 @@
-
-            x, y, z: integer = 1, 2, 3;
-            a: array [3, 2] of integer = {{x + z}, {y, z}};
-            main: function void(){}
-    

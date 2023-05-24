@@ -1,5 +1,0 @@
-main: function void () {
-            printInteger(4);
-            readInteger();
-            writeFloat(a);
-        }

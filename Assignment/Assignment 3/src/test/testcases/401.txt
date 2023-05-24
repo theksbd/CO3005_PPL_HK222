@@ -1,5 +1,0 @@
-
-        x: integer = 3;
-        y: auto;
-        main: function void(){}
-    

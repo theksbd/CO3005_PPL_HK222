@@ -1,9 +1,0 @@
-
-            main: function void() {
-                j: boolean = false;
-                for (i = 1, i < 100, i+1) {
-                    j : integer = 0;
-                    j = true;
-                }
-            }
-        

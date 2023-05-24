@@ -1,6 +1,0 @@
-
-            main: function void(){
-                a: auto = 22;
-                b: integer = V + 1.0;
-            }
-        

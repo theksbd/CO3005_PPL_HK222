@@ -1,4 +1,0 @@
-
-        y: integer =  true || (true && false);
-        main: function void(){}
-    

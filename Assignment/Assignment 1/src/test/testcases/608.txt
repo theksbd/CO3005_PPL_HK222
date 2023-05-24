@@ -1,1 +1,0 @@
-a, b: float = foo(2 + x, 4.0 / y), bar(x);

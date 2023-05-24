@@ -1,5 +1,0 @@
-
-        x: integer = -100;
-        y: integer = -x;
-        main: function void(){}
-    

@@ -1,8 +1,0 @@
-main: function void () {
-            while(i < 10) {
-                a: integer = 5;
-                for(i = 0, i < foo(a, 1), i + 1) {
-                    b: integer = foo(a, 1);
-                }
-            }
-        }

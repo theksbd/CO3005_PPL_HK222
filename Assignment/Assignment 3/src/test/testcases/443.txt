@@ -1,7 +1,0 @@
-
-            main1: function void(b: string) {
-                a: string = "hoang";
-                b: integer = a[1];
-            }
-            main: function void(){}
-        

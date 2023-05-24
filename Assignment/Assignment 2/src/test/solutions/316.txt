@@ -1,3 +1,0 @@
-Program([
-	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(==, Id(a), BooleanLit(True)), BlockStmt([ContinueStmt()])), WhileStmt(BinExpr(==, Id(a), BooleanLit(True)), BlockStmt([BreakStmt()])), WhileStmt(BinExpr(==, Id(a), BooleanLit(True)), BlockStmt([ReturnStmt()]))]))
-])

@@ -1,6 +1,0 @@
-
-            foo: function string() {return "hoang";}
-            main: function void(){
-                v: string = foo();
-            }
-        

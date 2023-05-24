@@ -1,5 +1,0 @@
-
-        x: string = "Hello";
-        y: auto = x == "World";
-        main: function void(){}
-    

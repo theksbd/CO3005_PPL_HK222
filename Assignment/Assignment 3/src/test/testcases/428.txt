@@ -1,4 +1,0 @@
-
-        a : array [2, 2] of float = {{3, 3}, {123, 199, 123}, {123}};
-        main: function void(){}
-    

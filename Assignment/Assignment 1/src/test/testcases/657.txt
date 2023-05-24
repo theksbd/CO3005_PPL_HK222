@@ -1,6 +1,0 @@
-if (a == 1) {
-            a = 2;
-            /* This is a comment */
-            } else {
-            a = 3;
-            }

@@ -1,1 +1,0 @@
-Type mismatch in Variable Declaration: VarDecl(a, ArrayType([2], IntegerType), ArrayLit([UnExpr(-, FloatLit(1.0)), FloatLit(3.0)]))

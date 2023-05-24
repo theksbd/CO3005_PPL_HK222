@@ -1,4 +1,0 @@
-
-        a2 : array [2, 2] of integer = {{3.3, 3.5}, {123.1, 199.10}};
-        main: function void(){}
-    

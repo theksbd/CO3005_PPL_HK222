@@ -1,4 +1,0 @@
-main: function integer() {
-            a,b : array [5] of integer;
-            a[0] = s;
-        }

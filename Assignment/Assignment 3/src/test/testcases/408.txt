@@ -1,5 +1,0 @@
-
-        x: integer = 100;
-        y: auto = x != 5;
-        main: function void(){}
-    

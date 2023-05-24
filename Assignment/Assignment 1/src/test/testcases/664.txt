@@ -1,1 +1,0 @@
-/*8 more tests*/ if (test == 7) { return a; }

@@ -1,4 +1,0 @@
-
-        fact : function integer (n : integer) {}
-        main: function void(){}
-    

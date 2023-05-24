@@ -1,3 +1,0 @@
-
-        a: array [2, 2] of float = {false};
-        main: function void(){}

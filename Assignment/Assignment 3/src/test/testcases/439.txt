@@ -1,9 +1,0 @@
-
-        x: float = 3.0;
-        a : array [2] of integer;
-        fact : function integer (n : integer) {
-            n = n + 10;
-            a[0] = 1239;
-        }
-        main: function void(){}
-    

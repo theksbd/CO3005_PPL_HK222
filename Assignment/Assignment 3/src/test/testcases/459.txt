@@ -1,3 +1,0 @@
-
-        main: function void(args: integer, argv: array[100] of string) {}
-    

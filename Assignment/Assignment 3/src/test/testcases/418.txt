@@ -1,4 +1,0 @@
-
-        b: array [2, 3] of integer = {{}, {}};
-        main: function void(){}
-    

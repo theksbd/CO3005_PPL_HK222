@@ -1,9 +1,0 @@
-
-        x: float = 3.0;
-        fact : function integer (n : integer) {
-            if (n == 10) {}
-            else {
-            }
-        }
-        main: function void(){}
-    
