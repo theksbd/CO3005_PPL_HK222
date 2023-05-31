@@ -143,6 +143,26 @@ class CodeGenVisitor(BaseVisitor):
         self.genMETHOD(ast, o.sym, frame)
         return Symbol(ast.name, MType([x.typ for x in ast.param], ast.returnType), CName(self.className))
 
+    def visitVarDecl(self, ast, o):
+        frame = o.frame
+        sym = Symbol(ast.variable.name, ast.varType)
+        if frame:
+            frame.enterScope(False)
+            idx = frame.getNewIndex()
+            self.emit.printout(self.emit.emitVAR(
+                idx, sym.name, sym.mtype, frame.getStartLabel(), frame.getEndLabel(), frame))
+            frame.exitScope()
+        return sym
+
+    def visitParamDecl(self, ast, o):
+        frame = o.frame
+        sym = Symbol(ast.variable.name, ast.varType)
+        if frame:
+            idx = frame.getNewIndex()
+            self.emit.printout(self.emit.emitVAR(
+                idx, sym.name, sym.mtype, frame.getStartLabel(), frame.getEndLabel(), frame))
+        return sym
+
     def visitCallStmt(self, ast, o):
         ctxt = o
         frame = ctxt.frame
@@ -161,7 +181,229 @@ class CodeGenVisitor(BaseVisitor):
     def visitIntLiteral(self, ast, o):
         return self.emit.emitPUSHICONST(ast.value, o.frame), IntegerType()
 
+    def visitFloatLiteral(self, ast, o):
+        return self.emit.emitPUSHFCONST(str(ast.value), o.frame), FloatType()
+
+    def visitBooleanLiteral(self, ast, o):
+        return self.emit.emitPUSHICONST(str(ast.value), o.frame), BooleanType()
+
+    def visitStringLiteral(self, ast, o):
+        return self.emit.emitPUSHCONST('"' + ast.value + '"', StringType(), o.frame), StringType()
+
+    def visitArrayLiteral(self, ast, o):
+        return self.visit(ast.value, o)
+
     def visitBinaryOp(self, ast, o):
         e1c, e1t = self.visit(ast.left, o)
         e2c, e2t = self.visit(ast.right, o)
         return e1c + e2c + self.emit.emitADDOP(ast.op, e1t, o.frame), e1t
+
+    def visitUnaryOp(self, ast, o):
+        ec, et = self.visit(ast.val, o)
+        return ec + self.emit.emitNEGOP(et, o.frame), et
+
+    def visitId(self, ast, o):
+        sym = next(filter(lambda x: ast.name == x.name, o.sym), None)
+        if sym.value is None:
+            return self.emit.emitREADVAR(sym.name, sym.mtype, sym.value.value, o.frame), sym.mtype
+        else:
+            return self.emit.emitGETSTATIC(sym.value.value + "/" + sym.name, sym.mtype, o.frame), sym.mtype
+
+    def visitArrayCell(self, ast, o):
+        ec, et = self.visit(ast.arr, Access(o.frame, o.sym, False))
+        ec1, et1 = self.visit(ast.idx, Access(o.frame, o.sym, False))
+        return ec + ec1 + self.emit.emitALOAD(et, o.frame), et.eleType
+
+    def visitIf(self, ast, o):
+        # Code gen for cond
+        ec, et = self.visit(ast.cond, Access(o.frame, o.sym, False))
+        self.emit.printout(ec)
+
+        # Jump to FLABEL if False
+        FLABEL = o.frame.getNewLabel()
+        code = self.emit.emitIFFALSE(FLABEL, o.frame)
+        self.emit.printout(code)
+
+        # Code gen for true statement
+        self.visit(ast.tstmt, o)
+
+        # Jump to ELABEL to finish if else statement
+        ELABEL = o.frame.getNewLabel()
+        code = self.emit.emitGOTO(ELABEL, o.frame)
+        self.emit.printout(code)
+
+        if ast.estmt:
+            # Place FLABEL here for upcoming jump
+            code = self.emit.emitLABEL(FLABEL, o.frame)
+            self.emit.printout(code)
+
+            # Code gen for else statement
+            self.visit(ast.estmt, o)
+
+        # Place ELABEL here for upcoming jump
+        code = self.emit.emitLABEL(ELABEL, o.frame)
+        self.emit.printout(code)
+
+    def visitWhile(self, ast, o):
+        o.frame.enterLoop()
+
+        # Get BREAKLABEL and CONTINUELABEL
+        BREAKLABEL = o.frame.getBreakLabel()
+        CONTINUELABEL = o.frame.getContinueLabel()
+
+        # Place CONTINUELABEL here for repeating while statement
+        code = self.emit.emitLABEL(CONTINUELABEL, o.frame)
+        self.emit.printout(code)
+
+        # Code gen for cond
+        ec, et = self.visit(ast.cond, Access(o.frame, o.sym, False))
+        self.emit.printout(ec)
+
+        # Jump to BREAKLABEL if False
+        code = self.emit.emitIFFALSE(BREAKLABEL, o.frame)
+        self.emit.printout(code)
+
+        # Code gen for stmt
+        self.visit(ast.stmt, o)
+
+        # Jump to CONTINUELABEL to repeat while statement
+        code = self.emit.emitGOTO(CONTINUELABEL, o.frame)
+        self.emit.printout(code)
+
+        # Place BREAKLABEL here for upcoming jump
+        code = self.emit.emitLABEL(BREAKLABEL, o.frame)
+        self.emit.printout(code)
+
+        o.frame.exitLoop()
+
+    def visitDoWhile(self, ast, o):
+        o.frame.enterLoop()
+
+        # Get BREAKLABEL and CONTINUELABEL
+        BREAKLABEL = o.frame.getBreakLabel()
+        CONTINUELABEL = o.frame.getContinueLabel()
+
+        # Place CONTINUELABEL here for repeating do while statement
+        code = self.emit.emitLABEL(CONTINUELABEL, o.frame)
+        self.emit.printout(code)
+
+        # Code gen for stmt
+        self.visit(ast.stmt, o)
+
+        # Code gen for cond
+        ec, et = self.visit(ast.cond, Access(o.frame, o.sym, False))
+        self.emit.printout(ec)
+
+        # Jump to BREAKLABEL if False
+        code = self.emit.emitIFFALSE(BREAKLABEL, o.frame)
+        self.emit.printout(code)
+
+        # Jump to CONTINUELABEL to repeat do while statement
+        code = self.emit.emitGOTO(CONTINUELABEL, o.frame)
+        self.emit.printout(code)
+
+        # Place BREAKLABEL here for upcoming jump
+        code = self.emit.emitLABEL(BREAKLABEL, o.frame)
+        self.emit.printout(code)
+
+        o.frame.exitLoop()
+
+    def visitFor(self, ast, o):
+        o.frame.enterLoop()
+
+        # Get BREAKLABEL and CONTINUELABEL
+        BREAKLABEL = o.frame.getBreakLabel()
+        CONTINUELABEL = o.frame.getContinueLabel()
+
+        # Code gen for init: AssignStmt
+        if ast.init:
+            self.visit(ast.init, o)
+
+        # Place CONTINUELABEL here for repeating for statement
+        code = self.emit.emitLABEL(CONTINUELABEL, o.frame)
+        self.emit.printout(code)
+
+        # Code gen for cond
+        if ast.cond:
+            ec, et = self.visit(ast.cond, Access(o.frame, o.sym, False))
+            self.emit.printout(ec)
+
+            # Jump to BREAKLABEL if False
+            code = self.emit.emitIFFALSE(BREAKLABEL, o.frame)
+            self.emit.printout(code)
+
+        # Code gen for stmt
+        self.visit(ast.stmt, o)
+
+        # Code gen for upd: Expr
+        if ast.upd:
+            ec, et = self.visit(ast.upd, Access(o.frame, o.sym, False))
+            self.emit.printout(ec)
+
+        # Jump to CONTINUELABEL to repeat for statement
+        code = self.emit.emitGOTO(CONTINUELABEL, o.frame)
+        self.emit.printout(code)
+
+        # Place BREAKLABEL here for upcoming jump
+        code = self.emit.emitLABEL(BREAKLABEL, o.frame)
+        self.emit.printout(code)
+
+        o.frame.exitLoop()
+
+    def visitBreak(self, ast, o):
+        code = self.emit.emitGOTO(o.frame.getBreakLabel(), o.frame)
+        self.emit.printout(code)
+
+    def visitContinue(self, ast, o):
+        code = self.emit.emitGOTO(o.frame.getContinueLabel(), o.frame)
+        self.emit.printout(code)
+
+    def visitReturn(self, ast, o):
+        if ast.expr:
+            ec, et = self.visit(ast.expr, Access(o.frame, o.sym, False))
+            self.emit.printout(ec)
+            code = self.emit.emitRETURN(et, o.frame)
+            self.emit.printout(code)
+        else:
+            code = self.emit.emitRETURN(VoidType(), o.frame)
+            self.emit.printout(code)
+
+    def visitBlock(self, ast, o):
+        frame = o.frame
+        frame.enterScope(False)
+        list(map(lambda x: self.visit(x, o), ast.body))
+        frame.exitScope()
+
+    def visitAssign(self, ast, o):
+        ctxt = o
+        frame = ctxt.frame
+        nenv = ctxt.sym
+        sym = next(filter(lambda x: ast.lhs.name == x.name, nenv), None)
+        if sym.value is None:
+            ec, et = self.visit(ast.rhs, Access(frame, nenv, False, True))
+            self.emit.printout(ec)
+            self.emit.printout(self.emit.emitWRITEVAR(
+                sym.name, sym.mtype, sym.value.value, frame))
+        else:
+            ec, et = self.visit(ast.rhs, Access(frame, nenv, False, True))
+            self.emit.printout(ec)
+            self.emit.printout(self.emit.emitPUTSTATIC(
+                sym.value.value + "/" + sym.name, sym.mtype, frame))
+
+    def visitIntegerType(self, ast, o):
+        return "int", IntegerType()
+
+    def visitFloatType(self, ast, o):
+        return "float", FloatType()
+
+    def visitBooleanType(self, ast, o):
+        return "boolean", BooleanType()
+
+    def visitStringType(self, ast, o):
+        return "String", StringType()
+
+    def visitVoidType(self, ast, o):
+        return "void", VoidType()
+
+    def visitArrayType(self, ast, o):
+        return self.visit(ast.typ, o)
